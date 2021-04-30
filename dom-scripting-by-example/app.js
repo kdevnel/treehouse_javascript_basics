@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let li = lis[i];
         if (li.className === "responded") {
           li.style.display = "";
+          li.querySelector("label").style.display = "none";
         } else {
           li.style.display = "none";
         }
@@ -29,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       for (let i = 0; i < lis.length; i++) {
         let li = lis[i];
         li.style.display = "";
+        li.querySelector("label").style.display = "";
       }
     }
   });
@@ -48,31 +50,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const li = document.createElement("li");
     appendToLI("span", "textContent", text);
-    appendToLI("label", "textContent", "Confirmed").appendChild(
+    appendToLI("label", "textContent", "Confirm").appendChild(
       createElement("input", "type", "checkbox")
     );
     appendToLI("button", "textContent", "edit");
     appendToLI("button", "textContent", "remove");
+    guestList.push(li);
     return li;
   }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const text = input.value;
-    input.value = "";
-    const li = createLI(text);
-    invitedList.appendChild(li);
+    const errorMessage = document.querySelector(".errorMessage");
+    if (text) {
+      input.value = "";
+      const li = createLI(text);
+      invitedList.appendChild(li);
+      if (errorMessage) {
+        input.classList.remove("error");
+        errorMessage.style.display = "none";
+      }
+    } else if (!text && !errorMessage) {
+      const errorDiv = document.createElement("div");
+      errorDiv.classList.add("errorMessage");
+      errorDiv.textContent = "Can't be blank";
+      form.appendChild(errorDiv);
+      input.classList.add("error");
+    }
   });
 
   invitedList.addEventListener("change", (e) => {
     const checkbox = e.target;
     const checked = checkbox.checked;
     const listItem = checkbox.parentNode.parentNode;
+    const labelText = listItem.querySelector("label").firstChild;
 
     if (checked) {
       listItem.className = "responded";
+      labelText.nodeValue = "Confirmed";
     } else {
       listItem.className = "";
+      labelText.nodeValue = "Confirm";
     }
   });
 
