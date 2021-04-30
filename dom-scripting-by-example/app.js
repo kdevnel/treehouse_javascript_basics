@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const li = button.parentNode;
       const ul = li.parentNode;
       const action = button.textContent;
-      // we add this object to make branching logic more readable
+      // we add this object to make branching logic more readable. It replaces a standard if/else statement since each button text matches the property name of each item in the object already (remove, edit, save).
       const nameActions = {
         remove: () => {
           ul.removeChild(li);
