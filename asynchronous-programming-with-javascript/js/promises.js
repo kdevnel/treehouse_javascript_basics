@@ -29,6 +29,10 @@ function getProfiles(json) {
 
 // Generate the markup for each profile
 function generateHTML(data) {
+  const h3 = document.createElement("h3");
+  peopleList.appendChild(h3);
+  h3.innerHTML = `There are currently ${data.length} people in space 🚀`;
+
   data.map((person) => {
     const section = document.createElement("section");
     peopleList.appendChild(section);
@@ -52,10 +56,14 @@ function generateHTML(data) {
 }
 
 btn.addEventListener("click", (event) => {
+  event.target.textContent = "Loading...";
+
   getJSON(astrosUrl)
     .then(getProfiles)
     .then(generateHTML)
-    .catch((err) => console.log(err));
-
-  event.target.remove();
+    .catch((err) => {
+      peopleList.innerHTML = "<h3>Something went wrong</h3>";
+      console.log(err);
+    })
+    .finally(() => event.target.remove());
 });
