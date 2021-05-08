@@ -3,26 +3,29 @@ const wikiUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/";
 const peopleList = document.getElementById("people");
 const btn = document.querySelector("button");
 
-function getJSON(url) {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        let data = JSON.parse(xhr.responseText);
-        resolve(data);
-      } else {
-        reject(Error(xhr.statusText));
-      }
-    };
-    xhr.onerror = () => reject(Error("A network error occurred."));
-    xhr.send();
-  });
-}
+// Removing this in favour of the fetch() method which does most of the same task automatically
+// function getJSON(url) {
+//   return new Promise((resolve, reject) => {
+//     const xhr = new XMLHttpRequest();
+//     xhr.open("GET", url);
+//     xhr.onload = () => {
+//       if (xhr.status === 200) {
+//         let data = JSON.parse(xhr.responseText);
+//         resolve(data);
+//       } else {
+//         reject(Error(xhr.statusText));
+//       }
+//     };
+//     xhr.onerror = () => reject(Error("A network error occurred."));
+//     xhr.send();
+//   });
+// }
 
 function getProfiles(json) {
   const profiles = json.people.map((person) => {
-    return getJSON(wikiUrl + person.name, generateHTML);
+    return fetch(wikiUrl + person.name)
+      .then((response) => response.json())
+      .catch((err) => console.log("Error Fetching Wiki", err));
   });
   return Promise.all(profiles);
 }
@@ -58,7 +61,8 @@ function generateHTML(data) {
 btn.addEventListener("click", (event) => {
   event.target.textContent = "Loading...";
 
-  getJSON(astrosUrl)
+  fetch(astrosUrl)
+    .then((response) => response.json())
     .then(getProfiles)
     .then(generateHTML)
     .catch((err) => {
