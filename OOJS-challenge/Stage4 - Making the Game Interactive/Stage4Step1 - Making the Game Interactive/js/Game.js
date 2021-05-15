@@ -72,4 +72,12 @@ class Game {
             }
         }
     }
+
+    /**
+     * Checks for a win based on connected spaces
+     */
+    checkForWin() {
+        let spaces = this.board.spaces;
+
+    }
 }
